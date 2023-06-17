@@ -40,8 +40,8 @@ class Facade:
     def insert_ph(self, name):
         self.db.insert_ph(name)
 
-    def insert_book(self, name, year, lists, cost, genre, author, ph):
-        self.db.insert_book(name, year, lists, cost, genre, author, ph)
+    def insert_book(self, name, year, lists, genre, author, ph, cost, quantity):
+        self.db.insert_book(name, year, lists, genre, author, ph, cost, quantity)
 
     def insert_provider(self, name, address, phone):
         self.db.insert_provider(name, address, phone)
@@ -74,6 +74,9 @@ class Facade:
 
     def update_pr_od(self, id, provider, date, book, quantity, cost):
         self.db.update_pr_od(id, provider, date, book, quantity, cost)
+
+    def update_quantity_book(self, id):
+        self.db.update_quantity_book(id)
 
 # DELETE
 

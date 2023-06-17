@@ -85,7 +85,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap>../лого.png</pixmap>
+         <pixmap>img/logo2.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -2738,6 +2738,9 @@ font: 10pt &quot;MS Shell Dlg 2&quot;;</string>
                         <property name="styleSheet">
                          <string notr="true">background-color: rgb(255, 255, 255);</string>
                         </property>
+                        <property name="maximum">
+                         <number>999999999</number>
+                        </property>
                        </widget>
                       </item>
                      </layout>
@@ -2762,7 +2765,7 @@ font: 10pt &quot;MS Shell Dlg 2&quot;;</string>
                          <string notr="true">background-color: rgb(255, 255, 255);</string>
                         </property>
                         <property name="maximum">
-                         <number>100000</number>
+                         <number>999999999</number>
                         </property>
                        </widget>
                       </item>
@@ -2844,6 +2847,32 @@ border-top: 1px solid #3e3e3e;
 border-left: 1px solid #3e3e3e;
 border-right: 1px solid #3e3e3e;
 border-bottom: 1px solid #3e3e3e;background-color: rgb(255, 255, 255);</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_42" stretch="0,100">
+                      <item>
+                       <widget class="QLabel" name="label_5">
+                        <property name="styleSheet">
+                         <string notr="true">background-color: rgb(216, 0, 4);
+color: rgb(255, 255, 255);
+font: 10pt &quot;MS Shell Dlg 2&quot;;</string>
+                        </property>
+                        <property name="text">
+                         <string>Укажите количество книг:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="quantity_book">
+                        <property name="styleSheet">
+                         <string notr="true">background-color: rgb(255, 255, 255);</string>
+                        </property>
+                        <property name="maximum">
+                         <number>999999999</number>
                         </property>
                        </widget>
                       </item>

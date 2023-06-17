@@ -24,10 +24,10 @@ class Database:
         """
         cursor = self.conn.cursor()
         if len(fio) == 2:
-            cursor.execute("INSERT INTO clients VALUES (NULL, %s, %s, NULL, %s, %s)",
+            cursor.execute("INSERT INTO client VALUES (NULL, %s, %s, NULL, %s, %s)",
                            (fio[0], fio[1], dateOfBirth, email))
         else:
-            cursor.execute("INSERT INTO clients VALUES (NULL, %s, %s, %s, %s, %s)",
+            cursor.execute("INSERT INTO client VALUES (NULL, %s, %s, %s, %s, %s)",
                            (fio[0], fio[1], fio[2], dateOfBirth, email))
         self.conn.commit()
 
@@ -62,7 +62,7 @@ class Database:
         cursor.execute("INSERT INTO publishing_house VALUES (NULL, %s)", (name,))
         self.conn.commit()
 
-    def insert_book(self, name, year, lists, genre, author, ph, cost):
+    def insert_book(self, name, year, lists, genre, author, ph, cost, quantity):
         """
         Добавление книги
         :param name: название книги
@@ -70,9 +70,10 @@ class Database:
         :param genre: код жанра
         :param author: код автора
         :param ph: код издательства
+        :param quantity: количество на складе
         """
         cursor = self.conn.cursor()
-        cursor.execute("INSERT INTO books VALUES (NULL, %s, %s, %s, %s, %s, %s, %s)", (name, year, lists, genre, author, ph, cost))
+        cursor.execute("INSERT INTO book VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s)", (name, year, lists, genre, author, ph, cost, quantity))
         self.conn.commit()
 
     def insert_request(self, number, date, time, client, employee, book):
@@ -86,7 +87,7 @@ class Database:
         :param book: код книги
         """
         cursor = self.conn.cursor()
-        cursor.execute("INSERT INTO requests VALUES (NULL, %s, %s, %s, %s, %s, %s)",
+        cursor.execute("INSERT INTO request VALUES (NULL, %s, %s, %s, %s, %s, %s)",
                        (number, date, time, client, book, employee))
         self.conn.commit()
 
@@ -99,7 +100,7 @@ class Database:
         """
         cursor = self.conn.cursor()
         cursor.execute(f"INSERT INTO history VALUES (NULL, %s, NULL, %s, %s)", (time, success, login))
-        cursor.execute(f"UPDATE employees set `Последний вход`='{time}', `Тип входа`='{success}' WHERE `Код сотрудника`='{login}'")
+        cursor.execute(f"UPDATE employee set `Последний вход`='{time}', `Тип входа`='{success}' WHERE `Код сотрудника`='{login}'")
         self.conn.commit()
 
     def insert_time_exit(self, login, time, block):
@@ -188,7 +189,7 @@ class Database:
         :param ph: код издательства
         """
         cursor = self.conn.cursor()
-        cursor.execute(f"UPDATE books set `Наименование книги`='{name}', `Год издания`='{year}', `Количество страниц`='{lists}', `Стоимость`='{cost}', `Жанр`='{genre}', `Автор`='{author}', `Издательство`='{ph}' WHERE `Код книги`='{id}'")
+        cursor.execute(f"UPDATE book set `Наименование книги`='{name}', `Год издания`='{year}', `Количество страниц`='{lists}', `Стоимость`='{cost}', `Жанр`='{genre}', `Автор`='{author}', `Издательство`='{ph}' WHERE `Код книги`='{id}'")
         self.conn.commit()
 
     def update_provider(self, id, name, address, phone):
@@ -209,7 +210,7 @@ class Database:
         """
         cursor = self.conn.cursor()
         cursor.execute(
-            f"UPDATE requests set `Код заказа` = '{number}', `Дата создания` = '{date}', `Время заказа` = '{time}', "
+            f"UPDATE request set `Код заказа` = '{number}', `Дата создания` = '{date}', `Время заказа` = '{time}', "
             f"`Клиент` = '{client}', `Книга` = '{book}', `Сотрудник` = '{employee}' WHERE `ID`='{id}'")
         self.conn.commit()
 
@@ -229,6 +230,12 @@ class Database:
             f"`Количество`='{quantity}', `Стоимость`='{cost}' WHERE `Код поставки`='{id}'")
         self.conn.commit()
 
+    def update_quantity_book(self, id):
+        cursor = self.conn.cursor()
+        cursor.execute(
+            f"UPDATE book set `Количество на складе`=`Количество на складе`-1 WHERE `Код книги`='{id}'")
+        self.conn.commit()
+
 # DELETE
 
     def delete_client(self, id):
@@ -238,7 +245,7 @@ class Database:
         """
         cursor = self.conn.cursor()
         cursor.execute(f"SET FOREIGN_KEY_CHECKS=0")
-        cursor.execute(f"DELETE FROM clients WHERE `Код клиента`='{id}'")
+        cursor.execute(f"DELETE FROM client WHERE `Код клиента`='{id}'")
         cursor.execute(f"SET FOREIGN_KEY_CHECKS=1")
         self.conn.commit()
 
@@ -282,7 +289,7 @@ class Database:
         """
         cursor = self.conn.cursor()
         cursor.execute(f"SET FOREIGN_KEY_CHECKS=0")
-        cursor.execute(f"DELETE FROM books WHERE `Код книги`='{id}'")
+        cursor.execute(f"DELETE FROM book WHERE `Код книги`='{id}'")
         cursor.execute(f"SET FOREIGN_KEY_CHECKS=1")
         self.conn.commit()
 
@@ -304,7 +311,7 @@ class Database:
         """
         cursor = self.conn.cursor()
         cursor.execute(f"SET FOREIGN_KEY_CHECKS=0")
-        cursor.execute(f"DELETE FROM requests WHERE `ID`='{id}'")
+        cursor.execute(f"DELETE FROM request WHERE `ID`='{id}'")
         cursor.execute(f"SET FOREIGN_KEY_CHECKS=1")
         self.conn.commit()
 
@@ -327,7 +334,7 @@ class Database:
         :return: clients
         """
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT * FROM clients")
+        cursor.execute(f"SELECT * FROM client")
         clients = cursor.fetchall()
         return clients
 
@@ -367,7 +374,7 @@ class Database:
         :return: books
         """
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT * FROM books")
+        cursor.execute(f"SELECT * FROM book")
         books = cursor.fetchall()
         return books
 
@@ -397,7 +404,7 @@ class Database:
         :return: requests
         """
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT * FROM requests")
+        cursor.execute(f"SELECT * FROM request")
         requests = cursor.fetchall()
         return requests
 
@@ -431,7 +438,7 @@ class Database:
         :return: login
         """
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT `Логин` FROM employees WHERE `Код сотрудника`='{id}'")
+        cursor.execute(f"SELECT `Логин` FROM employee WHERE `Код сотрудника`='{id}'")
         login = str(cursor.fetchone())
         return login[2:-3]
 
@@ -442,7 +449,7 @@ class Database:
         """
         logins = []
         cursor = self.conn.cursor()
-        cursor.execute(f"""SELECT Логин FROM employees""")
+        cursor.execute(f"""SELECT Логин FROM employee""")
         rows = cursor.fetchall()
         for i in rows:
             for j in i:
@@ -457,7 +464,7 @@ class Database:
         """
         info = []
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT Пароль, Должность, `Последний вход`, `Тип входа`, Фамилия, Имя, Отчество, Фото FROM employees WHERE Логин = '{login}'")
+        cursor.execute(f"SELECT Пароль, Должность, `Последний вход`, `Тип входа`, Фамилия, Имя, Отчество, Фото FROM employee WHERE Логин = '{login}'")
         rows = cursor.fetchall()
         for i in rows:
             for j in i:
@@ -471,7 +478,7 @@ class Database:
         """
         clients = []
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT Фамилия, Имя, Отчество FROM clients")
+        cursor.execute(f"SELECT Фамилия, Имя, Отчество FROM client")
         rows = cursor.fetchall()
         for i in rows:
             if i[2] is None:
@@ -543,7 +550,7 @@ class Database:
         """
         books = []
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT `Наименование книги` FROM books")
+        cursor.execute(f"SELECT `Наименование книги` FROM book")
         rows = cursor.fetchall()
         for i in rows:
             books.append(str(i)[2:-3])
@@ -559,10 +566,10 @@ class Database:
         client = fio.split()
         if len(client) == 2:
             cursor.execute(
-                f"""SELECT `Код клиента` FROM clients WHERE `Фамилия`='{client[0]}' and `Имя`='{client[1]}'""")
+                f"""SELECT `Код клиента` FROM client WHERE `Фамилия`='{client[0]}' and `Имя`='{client[1]}'""")
         else:
             cursor.execute(
-                f"""SELECT `Код клиента` FROM clients WHERE `Фамилия`='{client[0]}' and `Имя`='{client[1]}' and 
+                f"""SELECT `Код клиента` FROM client WHERE `Фамилия`='{client[0]}' and `Имя`='{client[1]}' and 
                 `Отчество`='{client[2]}'""")
         code = str(cursor.fetchone())
         return code[1:-2]
@@ -577,7 +584,7 @@ class Database:
         """
         cursor = self.conn.cursor()
         cursor.execute(
-            f"SELECT `Код сотрудника` FROM employees WHERE Фамилия='{surname}' and Имя='{name}' and Отчество='{lastname}'")
+            f"SELECT `Код сотрудника` FROM employee WHERE Фамилия='{surname}' and Имя='{name}' and Отчество='{lastname}'")
         code = str(cursor.fetchone())
         return code[1:-2]
 
@@ -626,7 +633,7 @@ class Database:
         :return: code
         """
         cursor = self.conn.cursor(buffered=True)
-        cursor.execute(f"SELECT `Код книги` FROM books WHERE `Наименование книги`='{name}'")
+        cursor.execute(f"SELECT `Код книги` FROM book WHERE `Наименование книги`='{name}'")
         code = str(cursor.fetchone())
         return code[1:-2]
 
@@ -636,7 +643,7 @@ class Database:
         :return: data
         """
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT `Дата создания`, `Книга`, `Код заказа` FROM requests")
+        cursor.execute(f"SELECT `Дата создания`, `Книга`, `Код заказа` FROM request")
         data = cursor.fetchall()
         return data
 
@@ -646,7 +653,7 @@ class Database:
         :return: name
         """
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT `Наименование книги` FROM books WHERE `Код книги`='{code}'")
+        cursor.execute(f"SELECT `Наименование книги` FROM book WHERE `Код книги`='{code}'")
         name = str(cursor.fetchone())
         return name[1:-2]
 
@@ -657,7 +664,7 @@ class Database:
         :return: name
         """
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT `Стоимость` FROM books WHERE `Код книги`='{code}'")
+        cursor.execute(f"SELECT `Стоимость` FROM book WHERE `Код книги`='{code}'")
         name = str(cursor.fetchone())
         return name[1:-2]
 
@@ -671,8 +678,3 @@ class Database:
         cursor.execute(f"SELECT `Код поставщика` FROM provider WHERE `Наименование компании`='{name}'")
         code = str(cursor.fetchone())
         return code[1:-2]
-
-
-if __name__ == '__main__':
-    db = Database()
-    db.select_history()

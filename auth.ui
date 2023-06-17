@@ -79,7 +79,7 @@
           <enum>Qt::AutoText</enum>
          </property>
          <property name="pixmap">
-          <pixmap>../лого.png</pixmap>
+          <pixmap>img/logo2.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>

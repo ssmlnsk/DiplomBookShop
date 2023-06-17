@@ -224,8 +224,7 @@ class MainWindow(QMainWindow):
         rec = self.facade.read_clients()
         self.ui.table_clients.setColumnCount(6)
         self.ui.table_clients.setRowCount(len(rec))
-        self.ui.table_clients.setHorizontalHeaderLabels(
-            ['Код клиента', 'Фамилия', 'Имя', 'Отчество', 'Дата рождения', 'e-mail'])
+        self.ui.table_clients.setHorizontalHeaderLabels(['Код клиента', 'Фамилия', 'Имя', 'Отчество', 'Дата рождения', 'e-mail'])
 
         for i, client in enumerate(rec):
             for x, field in enumerate(client):
@@ -262,11 +261,11 @@ class MainWindow(QMainWindow):
         """
         self.table_book.clear()
         rec = self.facade.read_books()
-        self.ui.table_book.setColumnCount(8)
+        self.ui.table_book.setColumnCount(9)
         self.ui.table_book.setRowCount(len(rec))
         self.ui.table_book.setHorizontalHeaderLabels(
             ['Код книги', 'Название книги', 'Год издания', 'Количество страниц', 'Жанр', 'Автор',
-             'Издательство', 'Стоимость'])
+             'Издательство', 'Стоимость', 'Количество на складе'])
 
         for i, book in enumerate(rec):
             for x, field in enumerate(book):
@@ -443,9 +442,10 @@ class MainWindow(QMainWindow):
         au = self.ui.comboBox_author.currentText()
         author = self.facade.get_author_id(au)
         ph = self.facade.get_ph_id(self.ui.comboBox_ph.currentText())
+        quantity_book = self.ui.quantity_book.value()
 
         if title_book != '' and cost_book != '' and genre != '' and author != '' and ph != '':
-            self.facade.insert_book(title_book, year, lists, genre, author, ph, cost_book)
+            self.facade.insert_book(title_book, year, lists, genre, author, ph, cost_book, quantity_book)
         self.updateTableBook()
         self.ui.edit_title_book.clear()
         self.ui.spin_lists.clear()
@@ -1077,6 +1077,7 @@ class MainWindow(QMainWindow):
         for a in book:
             if a != 'o':
                 self.facade.create_request(request[0], request[1], request[2], request[3], self.emp, a)
+                self.facade.update_quantity_book(a)
             else:
                 continue
         self.add_new_field.clear()
